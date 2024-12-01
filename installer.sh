@@ -239,11 +239,7 @@ check_online_version() {
             releases_url="https://github.com/daeuniverse/dae/releases/latest"
         fi
         temp_file="$(mktemp /tmp/dae.XXXXXX)"
-        if ! curl -sL "$releases_url" | \
-             grep '<h1 data-view-component="true" class="d-inline mr-3">' | \
-             awk -F ' <h1 data-view-component="true" class="d-inline mr-3">' '{print $2}' | \
-             awk -F '</h1>' '{print $1}' | \
-             tee "$temp_file" >> /dev/null; then
+        if ! curl -s -I $releases_url | grep location | awk -F 'tag/' '{print $2}' | tr -d '\r' | tee "$temp_file" >> /dev/null; then
             echo "${RED}error: Failed to get the latest version of dae!${RESET}"
             echo "${RED}Please check your network and try again.${RESET}"
             exit 1
